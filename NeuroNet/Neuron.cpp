@@ -1,11 +1,11 @@
 #include "Neuron.h"
 #include <cmath>
-inline void Neuron::set(double sum)
+void Neuron::set(double sum)
 {
 	value = tanh(sum);
 }
 
-inline double Neuron::get()
+double Neuron::get()
 {
 	return value;
 }

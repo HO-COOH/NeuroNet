@@ -39,6 +39,7 @@ public:
 	Matrix& operator*=(double v);
 	
 	friend std::ostream& operator<<(std::ostream& out, const Matrix& m);
+	void reportSize() const;
 };
 
 Matrix eye(size_t size);

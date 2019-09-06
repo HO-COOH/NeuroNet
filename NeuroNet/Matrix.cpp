@@ -67,17 +67,17 @@ void Matrix::resize(size_t _rows, size_t _columns)
 	(*this) = temp;
 }
 
-inline size_t Matrix::row() const
+size_t Matrix::row() const
 {
 	return rows;
 }
 
-inline size_t Matrix::column() const
+size_t Matrix::column() const
 {
 	return columns;
 }
 
-inline size_t Matrix::size() const
+size_t Matrix::size() const
 {
 	return rows * columns;
 }
@@ -95,7 +95,7 @@ std::vector<double> Matrix::colAt(size_t colIndex)
 	return temp;
 }
 
-inline double& Matrix::operator()(size_t row, size_t col)
+double& Matrix::operator()(size_t row, size_t col)
 {
 	return data[row - 1][col - 1];
 }
@@ -222,6 +222,11 @@ Matrix& Matrix::operator*=(double v)
 {
 	(*this) = (*this) * v;
 	return *this;
+}
+
+void Matrix::reportSize() const
+{
+	std::cout << rows << "*" << columns;
 }
 
 std::ostream& operator<<(std::ostream& out, const Matrix& m)

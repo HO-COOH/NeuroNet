@@ -1,6 +1,7 @@
 #include <cmath>
 #include <iostream>
 #include "Matrix.h"
+#include "Layer.h"
 #include <iterator>
 
 using namespace std;
@@ -13,9 +14,18 @@ void MatrixTest()
 	auto m2 = eye(5);
 	m2.resize(3,4);
 	cout << m2;
+	double wei[] = { 0.1,0.2,0.3,0.1,0.1,0.1,0.3,0.3,0.3 };
+	Matrix weight1(wei, 3, 3);
+	cout << endl << weight1;
+}
+
+void LayerTest()
+{
+	Layer a(3, 3);	
 }
 
 int main()
 {
 	MatrixTest();
+	LayerTest();
 }
