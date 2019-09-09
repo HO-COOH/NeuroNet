@@ -32,11 +32,13 @@ public:
 	Matrix operator-() const;
 	Matrix operator*(const Matrix& m2) const;
 	Matrix operator*(double v) const;
+	Matrix operator/(double v) const;
 
 	Matrix& operator+=(const Matrix& m2);
 	Matrix& operator-=(const Matrix& m2);
 	Matrix& operator*=(const Matrix& m2);
 	Matrix& operator*=(double v);
+	Matrix& operator/=(double v);
 	
 	friend std::ostream& operator<<(std::ostream& out, const Matrix& m);
 	void reportSize() const;

@@ -56,6 +56,8 @@ void Layer::run(const Matrix& lastLayerOutput)
 	Matrix result = weight * lastLayerOutput + bias;
 	for (size_t rowIndex = 0; rowIndex < numberOfPerceptrons; ++rowIndex)
 	{
+		if (outputFlag == true)
+			perceptrons[rowIndex].neuron.setOutputFlag();
 		perceptrons[rowIndex].neuron.set(result(rowIndex + 1, 1));
 	}
 }
@@ -70,5 +72,12 @@ Matrix Layer::output()
 
 void Layer::report()
 {
-	std::cout << "This layer has " << numberOfPerceptrons << " perceptrons and " << numberOfConnections << " connections from last layer." << std::endl;
+	std::cout << "This layer has " << numberOfPerceptrons << " perceptrons and " << numberOfConnections << " connections per neuron from last layer." << std::endl;
+}
+
+bool Layer::isReady() const
+{
+	if(weight.column() != numberOfConnections || weight.row() != numberOfPerceptrons || bias.row() != numberOfPerceptrons || bias.column() != 1||perceptrons.size()==0||perceptrons.empty())
+		return false;
+	return true;
 }

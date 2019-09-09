@@ -1,5 +1,6 @@
 #include "Matrix.h"
 #include <iterator>
+#include <algorithm>
 
 Matrix::Matrix() :rows(0), columns(0)
 {}
@@ -10,8 +11,7 @@ Matrix::Matrix(size_t _rows, size_t _columns) : rows(_rows), columns(_columns)
 	for (auto& row : data)
 	{
 		row.resize(_columns);
-		for (auto& element : row)
-			element = 0;
+		std::fill(row.begin(), row.end(), 0);
 	}
 }
 
@@ -29,7 +29,6 @@ Matrix::Matrix(double* arr, size_t _rows, size_t _columns) :rows(_rows), columns
 		{
 			std::copy(current, current + _columns, row.begin());
 			current += _columns;
-
 		}
 	}
 }
@@ -188,6 +187,11 @@ Matrix Matrix::operator*(double v) const
 	return m;
 }
 
+Matrix Matrix::operator/(double v) const
+{
+	return Matrix(*this)*((double)1/v);
+}
+
 Matrix& Matrix::operator+=(const Matrix& m2)
 {
 	for (size_t rowIndex = 0; rowIndex < rows; ++rowIndex)
@@ -221,6 +225,12 @@ Matrix& Matrix::operator*=(const Matrix& m2)
 Matrix& Matrix::operator*=(double v)
 {
 	(*this) = (*this) * v;
+	return *this;
+}
+
+Matrix& Matrix::operator/=(double v)
+{
+	(*this) = (*this) *= ((double)1 / v);
 	return *this;
 }
 
