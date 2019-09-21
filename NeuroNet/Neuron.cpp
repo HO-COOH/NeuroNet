@@ -6,14 +6,11 @@ void Neuron::set(double sum)
 		value = tanh(sum);
 	else
 		value = sum;
+	this->sum = sum;
 }
 
-double Neuron::get()
+double Neuron::get() const
 {
 	return value;
 }
 
-void OutputNeuron::set(double sum)
-{
-	value = sum;
-}

@@ -10,11 +10,6 @@ public:
 		outputFlag = true;
 	}
 	void set(double sum);
-	double get();
-};
-
-class OutputNeuron: public Neuron
-{
-public:
-	void set(double sum);
+	double get() const;
+	double sum = 0;
 };

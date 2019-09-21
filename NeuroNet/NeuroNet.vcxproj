@@ -135,6 +135,7 @@
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Net.h" />
     <ClInclude Include="Neuron.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

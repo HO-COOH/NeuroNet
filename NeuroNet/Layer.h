@@ -3,23 +3,14 @@
 #include "Matrix.h"
 #include <vector>
 
-struct Perceptron
-{
-	Matrix weight;
-	double bias=0;
-	Neuron neuron;
-};
-
 class Layer
 {
-	std::vector<Perceptron> perceptrons;
-	Matrix weight;
-	Matrix bias;
+	std::vector<Neuron> perceptrons;
+	Matrix weight;	//weight is (number of perceptrons, number of connections+1) size Matrix
 	bool outputFlag = false;
 public:
 	Layer():numberOfConnections(0), numberOfPerceptrons(0) {}
 	explicit Layer(size_t _numberOfPerceptrons, size_t _numberOfConnections);
-	Layer(const Matrix& _weight, const Matrix& _bias);
 	Layer(const Matrix& _weight);
 
 	/*set and run*/
@@ -34,12 +25,33 @@ public:
 		return outputFlag;
 	}
 	void run(const Matrix& lastLayerOutput);
-	Matrix output();
+	Matrix output() const;
 
 	size_t numberOfConnections;
 	size_t numberOfPerceptrons;
-	void report();
+
+	void report() const;
 	//Matrix get();
 	bool isReady() const;
+
+	/*BackProp functions*/
+	Matrix& get_weight()
+	{
+		return weight;
+	}
+	double get_neuron_origin_sum(size_t index)
+	{
+		return perceptrons[index].sum;
+	}
+	double get_neuron_output(size_t index)
+	{
+		return perceptrons[index].get();
+	}
+
+	/*Debug*/
+	void ShowWeight() const
+	{
+		std::cout << weight;
+	}
 };
 

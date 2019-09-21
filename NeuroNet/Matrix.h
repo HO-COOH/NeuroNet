@@ -23,7 +23,9 @@ public:
 	size_t size() const;
 	std::vector<double> rowAt(size_t rowIndex);
 	std::vector<double> colAt(size_t colIndex);
+	Matrix slice(size_t row1, size_t row2, size_t col1, size_t col2) const;
 	double& operator()(size_t row, size_t col);
+	const double operator()(size_t row, size_t col) const;
 
 	/*Arithmetics*/
 	Matrix operator+(const Matrix& m2) const;
@@ -40,6 +42,9 @@ public:
 	Matrix& operator*=(double v);
 	Matrix& operator/=(double v);
 	
+	/*Transpose*/
+	Matrix transpose() const;
+
 	friend std::ostream& operator<<(std::ostream& out, const Matrix& m);
 	void reportSize() const;
 };
@@ -47,3 +52,4 @@ public:
 Matrix eye(size_t size);
 Matrix zeros(size_t size);
 Matrix zeros(size_t rows, size_t cols);
+Matrix random(size_t rows, size_t cols);

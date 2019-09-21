@@ -1,6 +1,8 @@
 #include "Matrix.h"
 #include <iterator>
 #include <algorithm>
+#include <ctime>
+#include <cstdlib>
 
 Matrix::Matrix() :rows(0), columns(0)
 {}
@@ -94,7 +96,23 @@ std::vector<double> Matrix::colAt(size_t colIndex)
 	return temp;
 }
 
+Matrix Matrix::slice(size_t row1, size_t row2, size_t col1, size_t col2) const
+{
+	Matrix temp(row2 - row1 + 1, col2 - col1 + 1);
+	for (size_t i = 0; i < temp.row(); ++i)
+	{
+		for (size_t j = 0; j < temp.column(); ++j)
+			temp(i + 1, j + 1) = (*this)(row1 + i, col1 + j);
+	}
+	return temp;
+}
+
 double& Matrix::operator()(size_t row, size_t col)
+{
+	return data[row - 1][col - 1];
+}
+
+const double Matrix::operator()(size_t row, size_t col) const
 {
 	return data[row - 1][col - 1];
 }
@@ -234,6 +252,19 @@ Matrix& Matrix::operator/=(double v)
 	return *this;
 }
 
+Matrix Matrix::transpose() const
+{
+	Matrix temp(columns, rows);
+	for (size_t rowIndex = 0; rowIndex < rows; ++rowIndex)
+	{
+		for (size_t colIndex = 0; colIndex < columns; ++colIndex)
+		{
+			temp.data[colIndex][rowIndex] = data[rowIndex][colIndex];
+		}
+	}
+	return temp;
+}
+
 void Matrix::reportSize() const
 {
 	std::cout << rows << "*" << columns;
@@ -266,4 +297,18 @@ Matrix zeros(size_t size)
 Matrix zeros(size_t rows, size_t cols)
 {
 	return Matrix(rows, cols);
+}
+
+Matrix random(size_t rows, size_t cols)
+{
+	Matrix temp(rows, cols);
+	srand((unsigned)time(0));
+	for (size_t i = 0; i < rows; ++i)
+	{
+		for (size_t j = 0; j < cols; ++j)
+		{
+			temp(i + 1, j + 1) = (double)rand() / RAND_MAX;
+		}
+	}
+	return temp;
 }
