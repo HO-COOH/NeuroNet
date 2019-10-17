@@ -1,4 +1,0 @@
-The mistake is very simple and straightforward:
-I misunderstood the requirement.
-In my original code, I feed the data to the network thousands of times and make it fully trianed, instead of one epoch.
-In my corrected version, I only changed the iterations to one epoch and the result are eactly the same as yours.
