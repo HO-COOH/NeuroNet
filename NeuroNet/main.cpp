@@ -5,12 +5,39 @@
 #include "Net.h"
 #include <iterator>
 #include "Timer.h"
+#include "Reader.h"
+#include <opencv2/opencv.hpp>
 
 using namespace std;
+
+void showMatirx(const Matrix& m)
+{
+	cv::Mat m2(14, 14, CV_8UC1);
+	int index2 = 1;
+	for (size_t row = 0; row < 14; ++row)
+	{
+		for (size_t col = 0; col < 14; ++col)
+		{
+			m2.at<uchar>(row, col) = m(index2++, 1) * 255.0;
+		}
+	}
+	cv::namedWindow("Figure");
+	cv::imshow("Figure", m2);
+	cv::waitKey(0);
+	cv::destroyWindow("Figure");
+}
+
+
+
+void MatrixTest()
+{
+	cout << eye(5).transpose() * 2.1;
+}
 
 /*Project 1*/
 void NetTest()
 {
+	Timer t;
 	/* 3 weight*/
 	double wei1[]{ 0.1,0.2,0.3,0.1,0.1,0.1,0.3,0.3,0.3 };
 	double wei2[]{ 0.0,0.0,0.0,0.1,0.1,0.1,0.1,0.1,0.1,0.2,0.2,0.2 };
@@ -68,6 +95,7 @@ void NetTest()
 
 
 	Net test(3, {3,4,2});
+	test.set_learning_rate(0.1);
 	test.init_inputs(inputs);	
 	test.init_weight(weights, bias);
 	test.set_desired_outputs(desiredOutputs);
@@ -75,7 +103,7 @@ void NetTest()
 	//test.show_layers();
 	//test.show_all_weights();
 
-	test.run(10000);
+	test.run(1,8, true);
 
 	cout << "\n\n";
 	//test.show_input_desired_output_pair();
@@ -116,8 +144,8 @@ void XORTest()
 
 	/*bias*/
 	vector<Matrix> bias;
-	bias.push_back(zeros(4, 1));
-	bias.push_back(zeros(1, 1));
+	bias.push_back(random(4, 1));
+	bias.push_back(random(1, 1));
 
 	Net test(2, { 4,1 });
 
@@ -126,18 +154,121 @@ void XORTest()
 	//test.show_all_weights();
 	test.set_desired_outputs(outputs);
 
-	test.run(1000);
+	test.run(4000,4);
 
 	for (size_t i = 0; i < 4; ++i)
 		test.test(i);
 }
 
+void ReaderTest()
+{
+	Reader r("train-images.idx3-ubyte", TRANING_IMAGE);
+	Reader r2("train-labels.idx1-ubyte", TRAINING_LABEL);
+	for (size_t i = 0; i < 60000; ++i)
+	{
+		Matrix temp(196, 1);
+		r >> temp;
+		//showMatirx(temp);
+		cout << r.inFile.tellg()<<endl;		
+		Matrix temp2(10, 1);
+		r2 >> temp2;
+		cout << temp2;
+		cout << r2.inFile.tellg()<<endl;
+	}
+
+}
+
+void MNIST()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	Reader train_image("train-images.idx3-ubyte", TRANING_IMAGE);
+	Reader train_label("train-labels.idx1-ubyte", TRAINING_LABEL);
+	Net net(196, { 100,10 });
+	train_image >> net;	//init inputs
+	train_label >> net;	//init desired_outputs
+	vector<Matrix>weights;	//init weights
+	weights.push_back(zeros(100, 196));
+	weights.push_back(zeros(10, 100));
+	vector<Matrix>bias;
+	bias.push_back(random(100, 1));
+	bias.push_back(random(10, 1));
+	net.init_weight(weights, bias);
+	net.show_inputs_outputs_size();
+
+	net.WriteToFile("test");
+	{
+		double sum = 0;
+		Reader test_image("t10k-images.idx3-ubyte", TEST_IMAGE);
+		Reader test_label("t10k-labels.idx1-ubyte", TEST_LABEL);
+		for (size_t i = 0; i < 10000; i++)	//change i for testing times here
+		{
+			Matrix input(196, 1);
+			Matrix label(10, 1);
+			test_image >> input;
+			test_label >> label;
+			sum += net.test(input, label).first;
+		}
+		cout << "Before training, error=" << sum << endl;
+	}
+
+	size_t epoch = 0;
+	do 
+	{
+		net.run(1, 60000, false, false);
+		//cout << "Training finished! Any key to test:";
+		//cin.get();
+
+		double sum = 0;	
+		Reader test_image("t10k-images.idx3-ubyte", TEST_IMAGE);
+		Reader test_label("t10k-labels.idx1-ubyte", TEST_LABEL);
+		Reader test_label_value("t10k-labels.idx1-ubyte", TEST_LABEL);
+		size_t correct_count = 0;
+		for (size_t i = 0; i < 10000; i++)	//change i for testing times here
+		{
+			Matrix input(196, 1);
+			Matrix label(10, 1);
+			unsigned char label_r;
+			test_label_value >> label_r;
+			test_image >> input;
+			//showMatirx(input);
+			test_label >> label;
+			//cout << label;
+			auto result=net.test(input, label,label_r,false);
+			sum += result.first;
+			if (result.second)
+				++correct_count;
+		}
+		double acc = correct_count / 10000.0;
+		cout << "Finished " << epoch++ << " epoches. " << "error=" << sum <<"\tacc="<<acc<< endl;
+	} while (epoch<10);
+
+	/*Demo*/
+	Reader test_image("t10k-images.idx3-ubyte", TEST_IMAGE);
+	Reader test_label("t10k-labels.idx1-ubyte", TEST_LABEL);
+	Reader test_label_value("t10k-labels.idx1-ubyte", TEST_LABEL);
+	for (size_t i = 0; i < 10000; i++)	//change i for testing times here
+	{
+		Matrix input(196, 1);
+		Matrix label(10, 1);
+		test_image >> input;
+		test_label >> label;
+		unsigned char label_r;
+		test_label_value >> label_r;
+		net.test(input, label, label_r, true);
+		showMatirx(input);
+	}
+}
+
 int main()
 {
-	Timer t;
-	NetTest();
+	//MatrixTest();
+	//NetTest();
+	//ReaderTest();
+	MNIST();
 	cout << endl;
 	cout << endl;
 	cout << "\n\nFinished!\n";
+	cin.get();
 	//XORTest();
 }

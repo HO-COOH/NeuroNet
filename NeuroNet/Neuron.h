@@ -13,3 +13,5 @@ public:
 	double get() const;
 	double sum = 0;
 };
+
+double sigmoid(double sum);

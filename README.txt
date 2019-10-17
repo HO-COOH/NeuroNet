@@ -5,5 +5,5 @@ If you are using another operating system, use g++ to compile. I only used stand
 
 Directory Structure:
     ./NeuroNet.sln          Visual studio solution file
-    ./Debug/             ...The executable file
-    ./NeuroNet/              The source code
+    ./Release/              ...The executable file
+    ./NeuroNet/             The source code
